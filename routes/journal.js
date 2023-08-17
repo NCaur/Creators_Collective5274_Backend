@@ -41,4 +41,28 @@ router.get('/fetchJournalEntries', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch journal entries' });
   }
 });
+
+router.get('/fetchdateJournalEntries', async (req, res) => {
+  try {
+    const selectedDate = req.query.selectedDate; // Get the selected date from query parameters
+
+    let journalEntries;
+
+    if (selectedDate) {
+      const dateObject = new Date(selectedDate);
+
+      // Fetch journal entries from MongoDB for the selected date
+      journalEntries = await JournalEntry.find({ date: dateObject });
+    } else {
+      // Fetch all journal entries if no selected date is provided
+      journalEntries = await JournalEntry.find();
+    }
+
+    res.status(200).json(journalEntries);
+  } catch (error) {
+    console.error('Error fetching journal entries:', error);
+    res.status(500).json({ error: 'Failed to fetch journal entries' });
+  }
+});
+
 module.exports = router;
